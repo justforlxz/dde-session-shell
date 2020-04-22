@@ -47,6 +47,8 @@ LogoWidget::LogoWidget(QWidget* parent)
 {
     m_locale = QLocale::system().name();
     initUI();
+
+    hide();
 }
 
 void LogoWidget::initUI() {

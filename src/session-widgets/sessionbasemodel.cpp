@@ -27,7 +27,10 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
 
 std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
 {
+    qDebug() <<QString("My UID:") <<QString::number(uid);
     for (auto user : m_userList) {
+        qDebug()<< QString("Name : ") <<user->name();
+        qDebug() <<QString("Uid : ")<<QString::number(user->uid());
         if (user->uid() == uid) {
             return user;
         }

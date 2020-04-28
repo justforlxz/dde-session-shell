@@ -102,6 +102,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     {
         initDBus();
         initData();
+        checkDBusServer(m_accountsInter->isValid());
     }
 
     // init ADDomain User
@@ -111,6 +112,19 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
         m_model->setIsServerModel(true);
         m_model->userAdd(user);
+    }
+}
+
+void LockWorker::checkDBusServer(bool isvalid)
+{
+    if (isvalid) {
+        onUserListChanged(m_accountsInter->userList());
+    } else {
+        // FIXME: 我不希望这样做，但是QThread::msleep会导致无限递归
+        QTimer::singleShot(300, this, [ = ] {
+            qWarning() << "com.deepin.daemon.Accounts is not start, rechecking!";
+            checkDBusServer(m_accountsInter->isValid());
+        });
     }
 }
 

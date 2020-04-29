@@ -532,6 +532,8 @@ void UserLoginWidget::initConnect()
         QString strTemp = m_accountEdit->text();
         if(strTemp.trimmed().isEmpty())
             strTemp = m_accountEdit->lineEdit()->text();
+        if(strTemp.trimmed().isEmpty())
+            strTemp = m_nameLbl->text();
 
         const QString account = strTemp;
         qDebug() << "account :" << account;

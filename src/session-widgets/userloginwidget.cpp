@@ -265,7 +265,10 @@ bool UserLoginWidget::inputInfoCheck(bool is_server)
 void UserLoginWidget::onOtherPageAccountChanged(const QVariant &value)
 {
     int cursorIndex =  m_accountEdit->lineEdit()->cursorPosition();
+    qDebug() << "set account:" << value.toString();
     m_accountEdit->setText(value.toString());
+    if(false == value.toString().trimmed().isEmpty() && m_accountEdit->text().trimmed().isEmpty())
+       m_accountEdit->lineEdit()->setText(value.toString());
     m_accountEdit->lineEdit()->setCursorPosition(cursorIndex);
 }
 
@@ -526,8 +529,19 @@ void UserLoginWidget::initConnect()
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
     });
     connect(m_passwordEdit, &DPasswordEditEx::returnPressed, this, [ = ] {
-        const QString account = m_accountEdit->text();
-        const QString passwd = m_passwordEdit->text();
+        QString strTemp = m_accountEdit->text();
+        if(strTemp.trimmed().isEmpty())
+            strTemp = m_accountEdit->lineEdit()->text();
+
+        const QString account = strTemp;
+        qDebug() << "account :" << account;
+
+        strTemp = m_passwordEdit->text();
+        if(strTemp.trimmed().isEmpty())
+            strTemp = m_passwordEdit->lineEdit()->text();
+
+        const QString passwd = strTemp;
+        qDebug() << "passwd :" << passwd;
 
         m_accountEdit->lineEdit()->setEnabled(false);
         emit requestAuthUser(account, passwd);

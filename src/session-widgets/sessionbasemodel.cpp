@@ -42,8 +42,10 @@ std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
 
 std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) const
 {
+    qDebug() <<QString("My Name:") << name;
     for (auto user : m_userList) {
-        if (user->name() == name) {
+        qDebug() <<QString("Name:") << user->name();
+        if (user->name().trimmed() == name.trimmed()) {
             return user;
         }
     }

@@ -47,7 +47,6 @@ private:
     void onUnlockFinished(bool unlocked);
 
     void userAuthForLock(std::shared_ptr<User> user);
-    void checkDBusServer(bool isvalid);
 private:
     bool m_authenticating;
     bool m_isThumbAuth;

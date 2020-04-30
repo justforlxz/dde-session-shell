@@ -27,10 +27,7 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
 
 std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
 {
-    qDebug() <<QString("My UID:") <<QString::number(uid);
     for (auto user : m_userList) {
-        qDebug()<< QString("Name : ") <<user->name();
-        qDebug() <<QString("Uid : ")<<QString::number(user->uid());
         if (user->uid() == uid) {
             return user;
         }
@@ -42,10 +39,8 @@ std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
 
 std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) const
 {
-    qDebug() <<QString("My Name:") << name;
     for (auto user : m_userList) {
-        qDebug() <<QString("Name:") << user->name();
-        if (user->name().trimmed() == name.trimmed()) {
+        if (user->name() == name) {
             return user;
         }
     }

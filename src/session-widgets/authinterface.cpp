@@ -67,7 +67,6 @@ void AuthInterface::onUserListChanged(const QStringList &list)
     }
 
     for (const QString &u : list) {
-        qDebug() << QString("user list : ") << u;
         if (!tmpList.contains(u)) {
             tmpList << u;
             onUserAdded(u);
@@ -75,7 +74,6 @@ void AuthInterface::onUserListChanged(const QStringList &list)
     }
 
     for (const QString &u : tmpList) {
-        qDebug() << QString("temp list : ") << u;
         if (!list.contains(u)) {
             onUserRemove(u);
         }
@@ -103,10 +101,6 @@ void AuthInterface::onUserRemove(const QString &user)
 
 void AuthInterface::initData()
 {
-    if(false == m_accountsInter->isValid())
-    {
-        qDebug() << QString("m_accountsInter is invalid");
-    }
     onUserListChanged(m_accountsInter->userList());
     onLoginUserListChanged(m_loginedInter->userList());
     onLastLogoutUserChanged(m_loginedInter->lastLogoutUser());

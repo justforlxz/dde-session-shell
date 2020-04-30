@@ -161,6 +161,8 @@ void SessionWidget::switchToUser(const QString &userName)
     if (m_currentUser != userName)
         m_currentUser = userName;
 
+    m_frameDataBind->updateValue("UserLoginAccount",userName);
+
     const QString sessionName = lastSessionName();
     m_currentSessionIndex = sessionIndex(sessionName);
 

@@ -530,11 +530,10 @@ void UserLoginWidget::initConnect()
 
         if(strTemp.trimmed().isEmpty())
         {
-            onOtherPageAccountChanged(m_nameLbl->text());
             strTemp = m_nameLbl->text();
         }
 
-        const QString account = strTemp;
+        const QString account = m_accountEdit->text();
         const QString passwd = m_passwordEdit->text();
         m_accountEdit->lineEdit()->setEnabled(false);
         emit requestAuthUser(account, passwd);
@@ -545,11 +544,10 @@ void UserLoginWidget::initConnect()
 
         if(strTemp.trimmed().isEmpty())
         {
-            onOtherPageAccountChanged(m_nameLbl->text());
             strTemp = m_nameLbl->text();
         }
 
-        const QString account = strTemp;
+        const QString account = m_accountEdit->text();
         const QString password = m_passwordEdit->text();
 
         if (m_passwordEdit->isVisible())

@@ -111,6 +111,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
         m_model->setIsServerModel(true);
         m_model->userAdd(user);
+        qDebug() << QString("server mode");
     }
 }
 

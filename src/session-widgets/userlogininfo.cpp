@@ -87,6 +87,7 @@ void UserLoginInfo::initConnect()
         }
 
         if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
+            qDebug() << "modle is server";
             auto user = dynamic_cast<NativeUser *>(m_model->findUserByName(account).get());
             auto current_user = m_model->currentUser();
             static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);

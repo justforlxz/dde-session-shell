@@ -67,7 +67,7 @@ User::User(QObject *parent)
     , m_locale(getenv("LANG"))
     , m_lockTimer(new QTimer)
 {
-    m_lockTimer->setInterval(1000 * 60);
+    m_lockTimer->setInterval(1000 * 30);
     m_lockTimer->setSingleShot(false);
     connect(m_lockTimer.get(), &QTimer::timeout, this, &User::onLockTimeOut);
     QFile openFile("/var/lib/lightdm/1.json");
@@ -80,6 +80,7 @@ User::User(QObject *parent)
         QJsonObject rootObj = jsonDocRead.object();
         m_isLock = rootObj["isLock"].toBool();
         m_startTime = time_t(rootObj["startTime"].toInt());
+        qDebug() << m_startTime;
         if (m_isLock) {
             m_tryNum = 0;
             startLock(false);
@@ -147,7 +148,23 @@ void User::setPath(const QString &path)
 
 bool User::isLockForNum()
 {
-    return m_isLock || --m_tryNum == 0;
+    bool is_lock = m_isLock || --m_tryNum == 0;
+    if(m_tryNum == 0) {
+        QFile file("/var/lib/lightdm/1.json");
+        if(!file.open( QIODevice::WriteOnly | QIODevice::Truncate)) {
+            qDebug() << "File open error";
+        }
+
+        QJsonObject jsonObject;
+        jsonObject.insert("isLock", is_lock);
+        jsonObject.insert("startTime", int(time(nullptr)));
+        QJsonDocument jsonDoc;
+        jsonDoc.setObject(jsonObject);
+
+        file.write(jsonDoc.toJson());
+        file.close();
+    }
+    return is_lock;
 }
 
 void User::startLock(bool is_start)
@@ -185,20 +202,6 @@ void User::onLockTimeOut()
         m_lockNum = 3;
         m_lockTimer->start();
     }
-
-    QFile file("/var/lib/lightdm/1.json");
-    if(!file.open( QIODevice::ReadWrite)) {
-        qDebug() << "File open error";
-    }
-
-    QJsonObject jsonObject;
-    jsonObject.insert("isLock", m_isLock);
-    jsonObject.insert("startTime", int(time(nullptr)));
-    QJsonDocument jsonDoc;
-    jsonDoc.setObject(jsonObject);
-
-    file.write(jsonDoc.toJson());
-    file.close();
 
     emit lockChanged(m_tryNum == 0);
 }

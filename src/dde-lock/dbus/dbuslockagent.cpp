@@ -15,8 +15,6 @@ void DBusLockAgent::setModel(SessionBaseModel *const model)
 void DBusLockAgent::Show()
 {
     m_model->setIsShow(true);
-
-    emit m_model->visibleChanged(true);
 }
 
 void DBusLockAgent::ShowAuth(bool active)

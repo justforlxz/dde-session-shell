@@ -55,6 +55,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         hide();
     });
     connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success){
+        qDebug() << "SessionBaseModel::authFinished -- success status : " << success;
         m_content->beforeUnlockAction(success);
     });
 }

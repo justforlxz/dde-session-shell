@@ -39,9 +39,11 @@
 #include <DGuiApplicationHelper>
 
 DGUI_USE_NAMESPACE
+#define  DEFAULT_BACKGROUND "/usr/share/backgrounds/default_background.jpg"
 
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
+    , m_bgPath(DEFAULT_BACKGROUND)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
 {
@@ -111,7 +113,7 @@ void FullscreenBackground::updateBackground(const QString &file)
         }
 
         if (!QFile::exists(m_bgPath)) {
-            m_bgPath = "/usr/share/backgrounds/default_background.jpg";
+            m_bgPath = DEFAULT_BACKGROUND;
         }
     }
 

@@ -52,6 +52,10 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
         setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Window);
 //    }
 #endif
+    QPalette pal(this->palette());
+    pal.setColor(QPalette::Background, QColor(0,0,0,0));
+    this->setAutoFillBackground(true);
+    this->setPalette(pal);
 
     m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
     m_fadeOutAni->setDuration(1000);

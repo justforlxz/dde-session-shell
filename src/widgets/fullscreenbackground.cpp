@@ -44,6 +44,7 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
+    , m_displayInter(new DisplayInter("com.deepin.daemon.Display", "/com/deepin/daemon/Display", QDBusConnection::sessionBus(), this))
 {
 #ifndef QT_DEBUG
 //    if(DGuiApplicationHelper::isXWindowPlatform()) {
@@ -63,8 +64,9 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     m_fadeOutAni->setEndValue(0.0f);
 
     installEventFilter(this);
-
+    connect(m_displayInter, &DisplayInter::DisplayModeChanged, this, &FullscreenBackground::updateMonitorGeometry);
     connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, static_cast<void (FullscreenBackground::*)()>(&FullscreenBackground::update));
+    setFocus();
 }
 
 bool FullscreenBackground::contentVisible() const
@@ -132,6 +134,11 @@ void FullscreenBackground::updateBackground(const QString &file)
 void FullscreenBackground::setScreen(QScreen *screen)
 {
     updateScreen(screen);
+}
+
+void FullscreenBackground::setMonitor(Monitor *monitor)
+{
+    updateMonitor(monitor);
 }
 
 void FullscreenBackground::setContentVisible(bool contentVisible)
@@ -232,11 +239,7 @@ void FullscreenBackground::showEvent(QShowEvent *event)
 
             // 更新窗口位置和大小
             updateGeometry();
-        } else {
-            updateScreen(w->screen());
         }
-
-        connect(w, &QWindow::screenChanged, this, &FullscreenBackground::updateScreen);
     }
 
     return QWidget::showEvent(event);
@@ -262,22 +265,35 @@ const QPixmap FullscreenBackground::pixmapHandle(const QPixmap &pixmap)
 
 void FullscreenBackground::updateScreen(QScreen *screen)
 {
-    qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << "UpdateScree: " << screen << screen->geometry();
-    if (screen == m_screen)
-        return;
-
-    if (m_screen) {
-        disconnect(m_screen, &QScreen::geometryChanged, this, &FullscreenBackground::updateGeometry);
-    }
-
-    if (screen) {
-        connect(screen, &QScreen::geometryChanged, this, &FullscreenBackground::updateGeometry);
-    }
-
     m_screen = screen;
 
     if (m_screen)
         updateGeometry();
+}
+
+void FullscreenBackground::updateMonitor(Monitor *monitor)
+{
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << "updateMonitor: ";
+    if (monitor == m_monitor)
+        return;
+
+    if (m_monitor) {
+        disconnect(m_monitor, &Monitor::geometryChanged, this, &FullscreenBackground::updateMonitorGeometry);
+        disconnect(m_monitor, &Monitor::enableChanged, this, &FullscreenBackground::setVisible);
+    }
+
+    if (monitor) {
+        connect(monitor, &Monitor::geometryChanged, this, &FullscreenBackground::updateMonitorGeometry);
+        connect(monitor, &Monitor::enableChanged, this, [&](bool isEnable){
+            if(!isEnable)
+                setVisible(isEnable);
+        });
+    }
+
+    m_monitor = monitor;
+
+    if (m_monitor)
+        updateMonitorGeometry();
 }
 
 void FullscreenBackground::updateGeometry()
@@ -286,6 +302,11 @@ void FullscreenBackground::updateGeometry()
     setGeometry(m_screen->geometry());
 }
 
+void FullscreenBackground::updateMonitorGeometry()
+{
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << "updateMonitorGeometry: " << m_monitor << m_monitor->rect();
+    setGeometry(m_monitor->rect());
+}
 /********************************************************
  * 监听主窗体属性。
  * 用户登录界面，主窗体在某时刻会被设置为WindowDeactivate，

@@ -114,7 +114,7 @@ void ContentWidget::showEvent(QShowEvent *event)
     }
 
     tryGrabKeyboard();
-
+    setFocus();
     m_currentSelectedBtn = m_lockButton;
     m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 }
@@ -906,10 +906,12 @@ void ContentWidget::onCancel()
 
 void ContentWidget::tryGrabKeyboard()
 {
-#ifdef QT_DEBUG
+//#ifdef QT_DEBUG
+//    return;
+//#endif
+#if 1
     return;
 #endif
-
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
         m_failures = 0;
         return;

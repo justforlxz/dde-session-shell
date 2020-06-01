@@ -287,7 +287,7 @@ void UserExpiredWidget::onChangePassword()
     const QString confirm = m_confirmPasswordEdit->text();
 
     if (!m_userName.isEmpty() && !m_password.isEmpty() && errorFilter(new_pass, confirm)) {
-#define TIMEOUT 1000
+#define TIMEOUT 3000
 
         QProcess process;
         process.start("su", {m_userName});

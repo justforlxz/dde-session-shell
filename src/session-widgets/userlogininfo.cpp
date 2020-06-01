@@ -139,6 +139,7 @@ void UserLoginInfo::abortConfirm(bool abort)
 void UserLoginInfo::beforeUnlockAction(bool is_finish)
 {
     if(is_finish){
+        m_userLoginWidget->hideAlert();
         m_userLoginWidget->unlockSuccessAni();
     }else {
         m_userLoginWidget->unlockFailedAni();

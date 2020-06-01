@@ -110,6 +110,11 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
     m_passwordEdit->lineEdit()->update();
 }
 
+void UserLoginWidget::hideAlert()
+{
+    m_passwordEdit->hideAlertMessage();
+}
+
 //密码输入错误,设置错误信息
 void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
@@ -118,7 +123,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseMode
         return;
     }
 
-    m_passwordEdit->showAlertMessage(message, 1000);
+    m_passwordEdit->showAlertMessage(message, 3000);
 }
 
 //设置窗体显示模式

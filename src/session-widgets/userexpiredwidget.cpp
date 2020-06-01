@@ -318,6 +318,8 @@ void UserExpiredWidget::onChangePassword()
         QString output = process.readAllStandardOutput();
         QString time = process.readAllStandardError();
         if (process.exitCode() != 0 || output.isEmpty()) {
+            qDebug() << QString("process SU exitCode:%1").arg(process.exitCode());
+            qDebug() << output;
             process.terminate();
             m_confirmPasswordEdit->showAlertMessage(tr("Failed to change your password"));
             qDebug() << "password modify failed: " << process.readLine();

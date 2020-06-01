@@ -93,12 +93,8 @@ void FullscreenBackground::updateBackground(const QString &file)
     if (url.isLocalFile())
         return updateBackground(url.path());
 
-    if (m_bgPath == file)
-        return;
-
     if (isPicture(file)) {
         m_bgPath = file;
-
     } else {
         QDir dir("/usr/share/wallpapers/deepin");
         if (dir.exists()) {
@@ -118,6 +114,9 @@ void FullscreenBackground::updateBackground(const QString &file)
     }
 
     QString imageEffect = m_imageEffectInter->Get("", m_bgPath);
+
+    if (m_bgPath == imageEffect)
+        return;
 
     if (!isPicture(imageEffect)) imageEffect = m_bgPath;
 

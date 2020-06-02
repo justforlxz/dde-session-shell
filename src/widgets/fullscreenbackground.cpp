@@ -43,7 +43,6 @@ DGUI_USE_NAMESPACE
 
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
-    , m_bgPath(DEFAULT_BACKGROUND)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
 {
@@ -93,6 +92,9 @@ void FullscreenBackground::updateBackground(const QString &file)
     if (url.isLocalFile())
         return updateBackground(url.path());
 
+    if(m_bgPath == file || file.isEmpty())
+        return;
+
     if (isPicture(file)) {
         m_bgPath = file;
     } else {
@@ -114,9 +116,6 @@ void FullscreenBackground::updateBackground(const QString &file)
     }
 
     QString imageEffect = m_imageEffectInter->Get("", m_bgPath);
-
-    if (m_bgPath == imageEffect)
-        return;
 
     if (!isPicture(imageEffect)) imageEffect = m_bgPath;
 

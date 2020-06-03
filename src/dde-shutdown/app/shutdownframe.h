@@ -38,7 +38,7 @@ class ShutdownFrame: public FullscreenBackground
 {
     Q_OBJECT
 public:
-    ShutdownFrame(SessionBaseModel * const model, QWidget* parent = nullptr);
+    ShutdownFrame(SessionBaseModel *const model, QWidget *parent = nullptr);
     ~ShutdownFrame();
 
 Q_SIGNALS:
@@ -58,12 +58,13 @@ private:
     ContentWidget *m_shutdownFrame;
 };
 
-class ShutdownFrontDBus : public QDBusAbstractAdaptor {
+class ShutdownFrontDBus : public QDBusAbstractAdaptor
+{
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.deepin.dde.shutdownFront")
 
 public:
-    ShutdownFrontDBus(DBusShutdownAgent* parent);
+    ShutdownFrontDBus(DBusShutdownAgent *parent, SessionBaseModel *model);
     ~ShutdownFrontDBus();
 
     Q_SLOT void Shutdown();
@@ -75,7 +76,8 @@ public:
     Q_SLOT void Show();
 
 private:
-    DBusShutdownAgent* m_parent;
+    DBusShutdownAgent *m_parent;
+    SessionBaseModel *m_model;
 };
 #endif // SHUTDOWNFRAME
 

@@ -72,6 +72,7 @@ private:
 
 private:
     void updateScreen(QScreen *screen);
+    void updateIfIsPicture (const QString& file);
     void updateGeometry();
     using QWidget::setGeometry;
     using QWidget::resize;

@@ -30,10 +30,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
     , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
 {
-    if (!m_login1Inter->isValid()) {
-        qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
-    }
-
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
 

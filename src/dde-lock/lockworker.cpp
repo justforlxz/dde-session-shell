@@ -30,19 +30,32 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
     , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
 {
+    if (!m_login1Inter->isValid()) {
+        qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
+    }
+
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
 
     //该信号用来处理初始化lock、锁屏或者切换用户(锁屏+登陆)三种场景的指纹认证
     QObject::connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool visible){
-        qDebug() << "SessionBaseModel::visibleChanged -- visible status :" << visible;
         auto user = m_model->currentUser();
         if(visible && user->uid() == m_currentUserUid) {
-            m_authFramework->Authenticate(user);
+            if (!m_login1Inter->preparingForSleep()) {
+                qDebug() << "Request SessionBaseModel::visibleChanged -- visible true";
+                m_authFramework->Authenticate(user);
+            }
         }
     });
     //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
     connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
+
+    connect(model, &SessionBaseModel::activeAuthChanged, this, [ = ](bool status) {
+        if (!status) {
+            qDebug() << "Request SessionBaseModel::activeAuthChanged -- s3 wake up";
+            m_authFramework->Authenticate(m_model->currentUser());
+        }
+    });
 
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {

@@ -224,6 +224,9 @@ void GreeterWorkek::oneKeyLogin()
         switchToUser(user_ptr);
         m_model->setCurrentUser(user_ptr);
         userAuthForLightdm(user_ptr);
+        QTimer::singleShot(300, this, [ = ] {
+            m_firstTimeLogin = false;
+        });
     } else {
         m_firstTimeLogin = false;
         onCurrentUserChanged(m_lockInter->CurrentUser());
@@ -374,7 +377,6 @@ void GreeterWorkek::authenticationComplete()
 
     // NOTE(kirigaya): It is not necessary to display the login animation.
     emit requestUpdateBackground(m_model->currentUser()->desktopBackgroundPath());
-    if (m_firstTimeLogin) {m_firstTimeLogin = false;}
 
 #ifndef DISABLE_LOGIN_ANI
     QTimer::singleShot(1000, this, startSessionSync);

@@ -272,11 +272,11 @@ void FullscreenBackground::updateScreen(QScreen *screen)
         return;
 
     if (m_screen) {
-        disconnect(m_screen, &QScreen::geometryChanged, this, &FullscreenBackground::updateGeometry);
+        disconnect(m_screen, &QScreen::virtualGeometryChanged, this, &FullscreenBackground::updateGeometry);
     }
 
     if (screen) {
-        connect(screen, &QScreen::geometryChanged, this, &FullscreenBackground::updateGeometry);
+        connect(screen, &QScreen::virtualGeometryChanged, this, &FullscreenBackground::updateGeometry);
     }
 
     m_screen = screen;

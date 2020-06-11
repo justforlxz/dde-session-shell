@@ -103,7 +103,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
                 m_controlWidget->setVirtualKBVisible(true);
             }, Qt::QueuedConnection);
             VirtualKBInstance::Instance().debug("inti", "init VirtualKB");
-            VirtualKBInstance::Instance().init(this);}
+            VirtualKBInstance::Instance().init();}
     };
 
     connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB);
@@ -265,6 +265,8 @@ void LockContent::restoreCenterContent()
 
     restoreMode();
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
+    //切换content时应该及时刷新键盘的位置。
+    updateVirtualKBPosition();
 }
 
 void LockContent::restoreMode()
@@ -301,12 +303,17 @@ void LockContent::toggleVirtualKB()
         });
         return;
     }
+
+    m_virtualKB->setParent(this);
     m_virtualKB->setVisible(!m_virtualKB->isVisible());
     m_userLoginInfo->getUserLoginWidget()->setPassWordEditFocus();
 }
 
 void LockContent::updateVirtualKBPosition()
 {
+    if (m_virtualKB == nullptr)
+        return;
+
     const QPoint point = mapToParent(QPoint((width() - m_virtualKB->width()) / 2, height() - m_virtualKB->height() - 50));
     m_virtualKB->move(point);
 }

@@ -91,13 +91,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     connect(model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
     connect(m_lockInter, &DBusLockService::UserChanged, this, &GreeterWorkek::onCurrentUserChanged);
 
-    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [ = ](bool stopSleep) {
-        if (!stopSleep) {
-            qDebug() << "Request PrepareForSleep -- wake from s3" << m_model->currentUser()->name();
-            resetLightdmAuth(m_model->currentUser(), 100, false);
-        }
-    });
-
     const QString &switchUserButtonValue { valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand") };
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
     m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
@@ -410,7 +403,7 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 
 void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user,int delay_time , bool is_respond)
 {
-    if (user->isLock() || m_login1Inter->preparingForSleep()) return;
+    if (user->isLock()) return;
 
     QTimer::singleShot(delay_time, this, [ = ] {
         m_greeter->authenticate(user->name());

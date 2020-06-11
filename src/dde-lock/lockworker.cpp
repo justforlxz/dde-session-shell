@@ -37,21 +37,12 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     QObject::connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool visible){
         auto user = m_model->currentUser();
         if(visible && user->uid() == m_currentUserUid) {
-            if (!m_login1Inter->preparingForSleep()) {
-                qDebug() << "Request SessionBaseModel::visibleChanged -- visible true";
-                m_authFramework->Authenticate(user);
-            }
+            qDebug() << "Request SessionBaseModel::visibleChanged -- visible true";
+            m_authFramework->Authenticate(user);
         }
     });
     //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
     connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
-
-    connect(model, &SessionBaseModel::activeAuthChanged, this, [ = ](bool status) {
-        if (!status) {
-            qDebug() << "Request SessionBaseModel::activeAuthChanged -- s3 wake up";
-            m_authFramework->Authenticate(m_model->currentUser());
-        }
-    });
 
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {

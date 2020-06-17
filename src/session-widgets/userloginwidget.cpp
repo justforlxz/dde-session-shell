@@ -231,7 +231,7 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
 {
     m_action = action;
 
-    resetPowerIcon(true);
+    resetPowerIcon();
 }
 
 bool UserLoginWidget::inputInfoCheck(bool is_server)
@@ -695,16 +695,14 @@ void UserLoginWidget::updateNameLabel()
     }
 }
 
-void UserLoginWidget::resetPowerIcon(bool requirePrompt)
+void UserLoginWidget::resetPowerIcon()
 {
     if (m_action == SessionBaseModel::PowerAction::RequireRestart) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
     } else if (m_action == SessionBaseModel::PowerAction::RequireShutdown) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
     } else {
-        if (!requirePrompt) {
-            m_lockButton->setIcon(DStyle::SP_LockElement);
-        }
+        m_lockButton->setIcon(DStyle::SP_LockElement);
     }
 }
 
@@ -759,7 +757,7 @@ void UserLoginWidget::unlockFailedAni()
             delete timer;
             timer = nullptr;
             m_indexFail = 0;
-            resetPowerIcon(false);
+            resetPowerIcon();
         }
     });
     timer->start(20);
